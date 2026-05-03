@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Rocket Space Planet</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app-shell" aria-live="polite">
+      <section class="scene" aria-label="沉浸式太空旅程">
+        <img class="scene-image" id="sceneImage" alt="" />
+        <video class="scene-video" id="sceneVideo" playsinline preload="metadata"></video>
+
+        <div class="scene-shade" aria-hidden="true"></div>
+        <div class="scanline" aria-hidden="true"></div>
+
+        <header class="mission-bar">
+          <div>
+            <p class="kicker" id="sceneKicker"></p>
+            <h1 id="sceneTitle"></h1>
+          </div>
+        </header>
+
+        <div class="mission-copy">
+          <p id="sceneDescription"></p>
+        </div>
+
+        <footer class="control-dock">
+          <button class="primary-action" id="primaryAction" type="button">
+            <span class="button-light" aria-hidden="true"></span>
+            <span id="primaryActionText"></span>
+          </button>
+        </footer>
+      </section>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
