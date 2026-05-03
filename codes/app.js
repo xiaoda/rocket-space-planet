@@ -21,10 +21,10 @@ const scenes = [
     id: "moon-view",
     kicker: "Mission 03",
     title: "月面回望",
-    description: "下一段素材已就绪时，可以在配置里接入视频；现在先停留在月球视角。",
+    description: "从月球表面回望地球。\n按下按钮后，继续展开这段远距观测。",
     image: "../images/earth/earth-from-moon.png",
-    video: "",
-    action: "重新开始",
+    video: "../videos/earth/earth-from-moon.mp4",
+    action: "开始观测",
   },
 ];
 
@@ -84,11 +84,11 @@ async function playCurrentScene() {
   isTransitioning = true;
   primaryAction.disabled = true;
   primaryActionText.textContent = "播放中";
-  scene.classList.add("is-playing");
 
   try {
     sceneVideo.currentTime = 0;
     await sceneVideo.play();
+    scene.classList.add("is-playing");
   } catch (error) {
     scene.classList.remove("is-playing");
     primaryAction.disabled = false;
@@ -101,7 +101,7 @@ function goToNextScene() {
   scene.classList.remove("is-playing");
   sceneVideo.pause();
 
-  currentSceneIndex = Math.min(currentSceneIndex + 1, scenes.length - 1);
+  currentSceneIndex = (currentSceneIndex + 1) % scenes.length;
   isTransitioning = false;
   renderScene(currentSceneIndex);
 }
