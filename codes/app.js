@@ -12,13 +12,77 @@ const primaryActionText = document.querySelector("#primaryActionText");
 let currentSceneIndex = 0;
 let isTransitioning = false;
 let videoFailed = false;
+let renderToken = 0;
 
-function renderScene(index) {
+const imagePreloadPromises = new Map();
+
+function preloadImage(src) {
+  if (!src) {
+    return Promise.resolve();
+  }
+
+  if (imagePreloadPromises.has(src)) {
+    return imagePreloadPromises.get(src);
+  }
+
+  const promise = new Promise((resolve, reject) => {
+    const image = new Image();
+
+    image.onload = async () => {
+      try {
+        if (image.decode) {
+          await image.decode();
+        }
+      } catch (error) {
+        // The image is already loaded; decode failures should not block the scene.
+      }
+
+      resolve();
+    };
+
+    image.onerror = reject;
+    image.decoding = "async";
+    image.src = src;
+  });
+
+  const retryablePromise = promise.catch((error) => {
+    imagePreloadPromises.delete(src);
+    throw error;
+  });
+
+  imagePreloadPromises.set(src, retryablePromise);
+  return retryablePromise;
+}
+
+function preloadSceneImages() {
+  scenes.forEach((sceneItem) => {
+    preloadImage(sceneItem.image).catch(() => {});
+  });
+}
+
+function preloadUpcomingSceneImage(index) {
+  const nextIndex = (index + 1) % scenes.length;
+  preloadImage(scenes[nextIndex].image).catch(() => {});
+}
+
+async function renderScene(index) {
   const current = scenes[index];
+  const token = ++renderToken;
 
-  scene.classList.remove("is-playing");
   scene.dataset.scene = current.id;
   videoFailed = false;
+  primaryAction.disabled = true;
+  primaryActionText.textContent = "加载中";
+
+  try {
+    await preloadImage(current.image);
+  } catch (error) {
+    // Fall back to the browser's normal image loading path if preload fails.
+  }
+
+  if (token !== renderToken) {
+    return;
+  }
 
   sceneImage.src = current.image;
   sceneImage.alt = current.title;
@@ -35,6 +99,8 @@ function renderScene(index) {
   sceneDescription.textContent = current.description;
   primaryActionText.textContent = current.action;
   primaryAction.disabled = false;
+  scene.classList.remove("is-playing");
+  preloadUpcomingSceneImage(index);
 }
 
 async function playCurrentScene() {
@@ -69,13 +135,12 @@ async function playCurrentScene() {
   }
 }
 
-function goToNextScene() {
-  scene.classList.remove("is-playing");
+async function goToNextScene() {
   sceneVideo.pause();
 
   currentSceneIndex = (currentSceneIndex + 1) % scenes.length;
   isTransitioning = false;
-  renderScene(currentSceneIndex);
+  await renderScene(currentSceneIndex);
 }
 
 primaryAction.addEventListener("click", playCurrentScene);
@@ -89,4 +154,5 @@ sceneVideo.addEventListener("error", () => {
   videoFailed = true;
 });
 
+preloadSceneImages();
 renderScene(currentSceneIndex);
