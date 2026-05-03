@@ -32,6 +32,22 @@ python -m http.server 8000
 http://localhost:8000/codes/
 ```
 
+## Vercel 部署
+
+项目已添加 Vercel 部署配置：
+
+- 构建命令：`npm run build`
+- 输出目录：`dist`
+- 配置文件：`vercel.json`
+
+部署时把仓库导入 Vercel 即可。Vercel 会运行 `npm run build`，构建脚本会把 `codes/`、`images/`、`videos/` 打包到 `dist/`，并修正线上访问所需的素材路径。
+
+本地验证构建：
+
+```bash
+npm run build
+```
+
 ## 项目结构
 
 ```text
