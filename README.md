@@ -39,7 +39,8 @@ http://localhost:8000/codes/
 ├── codes/
 │   ├── index.html      # 页面结构
 │   ├── styles.css      # 移动端沉浸式视觉样式
-│   └── app.js          # 场景配置和播放逻辑
+│   ├── scenes.js       # 场景数据配置
+│   └── app.js          # 场景播放逻辑
 ├── images/
 │   ├── earth/
 │   └── rocket/
@@ -50,7 +51,7 @@ http://localhost:8000/codes/
 
 ## 场景配置
 
-所有场景都配置在 `codes/app.js` 的 `scenes` 数组里。
+所有场景都配置在 `codes/scenes.js` 的 `window.SCENES` 数组里。
 
 每个场景包含：
 
@@ -80,7 +81,7 @@ http://localhost:8000/codes/
 
 1. 把图片放到 `images/` 下合适的目录。
 2. 把视频放到 `videos/` 下合适的目录。
-3. 在 `codes/app.js` 的 `scenes` 数组末尾追加一个场景对象。
+3. 在 `codes/scenes.js` 的 `window.SCENES` 数组末尾追加一个场景对象。
 
 视频播放结束后，页面会自动进入数组里的下一个场景；最后一个场景结束后会回到第一个场景。
 
